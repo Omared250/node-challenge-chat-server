@@ -3,6 +3,7 @@ const cors = require("cors");
 
 const app = express();
 
+app.use(express.json());
 app.use(cors());
 
 const welcomeMessage = {
@@ -20,6 +21,20 @@ app.get("/", function (request, response) {
   response.sendFile(__dirname + "/index.html");
 });
 
-app.listen(5000, () => {
-   console.log("Listening on port 5000")
-  });
+app.get("/messages", function (request, response) {
+  response.status(201).send(messages);
+})
+
+app.get("/messages/:id", function (request, response) {
+  const messageId = parseInt(request.params.id);
+  const filteredMessagesById = messages.find((message) => message.id === messageId);
+  if (filteredMessagesById) {
+    response.status(200).send(filteredMessagesById);
+  } else {
+    response.status(404).send("Sorry! we cannot find this given id!!");
+  }
+} )
+
+app.listen(3000, () => {
+   console.log("Listening on port 3000")
+});
