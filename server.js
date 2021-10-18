@@ -33,6 +33,22 @@ app.get("/messages", function (request, response) {
   response.status(201).send(messages);
 })
 
+app.get("/messages/search", function (request, response) {
+  const messageValue = request.query.text
+
+  filteredMessages = messages.filter((m) => m.text.includes(messageValue));
+
+  filteredMessages.length > 0
+    ? response.send(filteredMessages)
+    : response.status(404).send("No messages found");
+})
+
+app.get("/messages/lastest", function(request, response) {
+  const lastTenMessages = messages.slice(-10);
+
+  response.status(200).send(lastTenMessages);
+})
+
 app.get("/messages/:id", function (request, response) {
   const messageId = parseInt(request.params.id);
   const filteredMessagesById = messages.find((message) => message.id === messageId);
@@ -43,6 +59,7 @@ app.get("/messages/:id", function (request, response) {
   }
 } )
 
+
 app.post("/messages", function (request, response) {
   const messageNewId = Math.max(...messages.map((m) => m.id));
   
@@ -51,6 +68,8 @@ app.post("/messages", function (request, response) {
     from : request.body.from,
     text : request.body.text,
   }
+
+  newMessage.timeSent = new Date();
 
   if (!isValidMessage(newMessage)) {
     response.status(404).send("Sorry!!, the message is not completed!!");
@@ -86,6 +105,6 @@ app.put("/messages/:id", function (request, response) {
   response.status(201).send("Message have been update!!!");
 })
 
-app.listen(3000, () => {
-   console.log("Listening on port 3000")
+app.listen(5000, () => {
+   console.log("Listening on port 5000")
 });
